@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="160" viewBox="0 0 560 160" role="img" aria-labelledby="title desc">
+  <title id="title">ECHO</title>
+  <desc id="desc">A blue echo-wave symbol beside the ECHO wordmark.</desc>
+  <rect x="65" y="25" width="100" height="100" rx="26" fill="#2563eb" fill-opacity="0.08"/>
+  <g fill="none" stroke="#2563eb" stroke-width="6" stroke-linecap="round">
+    <path d="M103 61 Q119 75 103 89"/>
+    <path d="M119 49 Q148 75 119 101" opacity="0.8"/>
+    <path d="M133 38 Q171 75 133 112" opacity="0.45"/>
+  </g>
+  <circle cx="90" cy="75" r="6" fill="#2563eb"/>
+  <text x="190" y="104" fill="#2563eb" font-family="Arial, Helvetica, sans-serif" font-size="79" font-weight="700" letter-spacing="7">ECHO</text>
+  <text x="280" y="148" fill="#64748b" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="600" letter-spacing="2.2" text-anchor="middle">TEST-TIME ADAPTATION · ASSOCIATIVE MEMORY</text>
+</svg>
