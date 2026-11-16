@@ -1,0 +1,19 @@
+MODEL:
+  ARCH: resnet50
+  PROJECTION:
+    EMB_DIM: 2048
+INPUT:
+  SIZE: (224, 224)
+CORRUPTION:
+  DATASET: imagenet_d109
+  NUM_CLASS: 109
+  NUM_EX: -1
+  TYPE: [clipart, infograph, painting, sketch]
+TEST:
+  BATCH_SIZE: 64
+  ROUNDS: 20
+SEED: 1
+SETTING: continual
+
+OPTIM:
+  LR: 0.001

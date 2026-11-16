@@ -1,0 +1,7 @@
+MODEL:
+  ARCH: vit_b_16
+  PROJECTION:
+    EMB_DIM: 768
+
+OPTIM:
+  LR: 0.001
