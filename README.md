@@ -4,8 +4,6 @@
 
 ### Static in Shift Space: Test-Time Adaptation that Remembers
 
-**Recall the shift. Reuse the update.**
-
 <a href="https://pytorch.org/"><img src="https://img.shields.io/badge/PyTorch-EE4C2C?style=flat-square&amp;logo=pytorch&amp;logoColor=white" alt="PyTorch"></a>
 <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&amp;logo=python&amp;logoColor=white" alt="Python"></a>
 <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-2563EB?style=flat-square" alt="MIT license"></a>
@@ -22,6 +20,10 @@ state, the base method takes its usual step, and the update is written back unde
 the same key. Recurring shifts can build on what the adapter learned before.
 
 **RGB histogram keys · Similarity-weighted recall · Fixed memory budget**
+
+<p align="center">
+<img src="assets/echo-plugin.png" alt="ECHO wraps Tent, EATA, or ROID in one line: read memory, take the base step, write the update." width="800">
+</p>
 
 ## Quick Start
 
@@ -53,6 +55,7 @@ datasets/
 ├── ImageNet-3DCC/
 ├── ImageNet-C-Bar/
 └── imagenet-d/
+    ├── lists/  # clipart_list.txt, infograph_list.txt, painting_list.txt, sketch_list.txt
     ├── clipart/
     ├── infograph/
     ├── painting/
@@ -60,8 +63,9 @@ datasets/
 ```
 
 Corruption folders follow the orders in [configs/order/](configs/order/).
-EATA also uses ImageNet training data for Fisher initialization. D109 sample lists
-and their provenance are included in [benchmark_assets/asr/](benchmark_assets/asr/).
+EATA also uses ImageNet training data for Fisher initialization. Supply D109 lists
+in `imagenet-d/lists/`, with each line containing a relative image path and its
+109-class label (`relative_image_path label`).
 Model construction and preprocessing are defined in [core/model/](core/model/).
 
 </details>
@@ -85,17 +89,13 @@ Choose a scenario with `bash scripts/run.sh <method> <scenario> <echo|baseline>`
 
 | Location | Contents |
 | :--- | :--- |
-| [methods/ECHO/](methods/ECHO/) | Associative memory, shift keys, and ablations |
+| [methods/ECHO/](methods/ECHO/) | Associative memory and shift keys |
 | [methods/](methods/) | Base adapter integrations |
 | [scripts/run.sh](scripts/run.sh) | Unified experiment launcher |
-| [echo_analysis/](echo_analysis/) | Pairwise-transfer and FLOPs tools |
 | [tests/](tests/) | CPU checks of memory behavior and reset |
-
-Memory controls and domain-switch experiments are available through
-[L-CS-memory.py](L-CS-memory.py) and [L-CS-Switches.py](L-CS-Switches.py).
 
 ## Acknowledgements & License
 
-Built on Tent, EATA, ROID, RobustBench, Torchvision, and ASR benchmark assets.
+Built on Tent, EATA, ROID, RobustBench, and Torchvision.
 See [third-party acknowledgements](THIRD_PARTY_NOTICES.md) for attribution and
 upstream licenses. ECHO is released under the [MIT license](LICENSE).

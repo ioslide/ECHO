@@ -1,4 +1,4 @@
-'ASR IN-D109: Clipart -> Infograph -> Painting -> Sketch, 20 visits.\n\nUses ImageNet pretrained weights, the official 109-class mask and full lists.\nTEST.ROUNDS controls visits; adapter state persists across domains and visits.\n'
+'IN-D109: Clipart -> Infograph -> Painting -> Sketch, 20 visits.\n\nUses ImageNet pretrained weights, the official 109-class mask and user-provided sample lists.\nTEST.ROUNDS controls visits; adapter state persists across domains and visits.\n'
 import argparse
 import copy
 import csv
@@ -18,7 +18,6 @@ from conf import cfg
 from core.utils import seed_everything, save_df, set_logger
 from setproctitle import setproctitle
 ROOT = Path(__file__).resolve().parent
-LISTS = ROOT / 'benchmark_assets/asr'
 D109_DOMAINS = ('clipart', 'infograph', 'painting', 'sketch')
 
 class ListedImages(Dataset):
@@ -39,7 +38,7 @@ class ListedImages(Dataset):
 def d109_samples(data_root, domain):
     """Official labels are already in the 109-class output-mask order."""
     root = Path(data_root) / 'imagenet-d'
-    rows = (LISTS / f'{domain}_list.txt').read_text().splitlines()
+    rows = (root / 'lists' / f'{domain}_list.txt').read_text().splitlines()
     return [(str(root / path), int(label)) for (path, label) in (row.split() for row in rows)]
 
 def prepare_samples(samples, seed, num_examples):
@@ -55,7 +54,7 @@ def make_loader(samples, cfg, transform, workers=4):
     return DataLoader(dataset, batch_size=cfg.TEST.BATCH_SIZE, shuffle=False, drop_last=False, num_workers=workers, pin_memory=True)
 
 def d109_transform(arch):
-    """ASR uses the pretrained torchvision model's resize/crop/interpolation."""
+    """Use the pretrained torchvision model's resize/crop/interpolation."""
     import torchvision.models as models
     preset = models.get_model_weights(arch).IMAGENET1K_V1.transforms()
     return transforms.Compose([transforms.Resize(preset.resize_size, interpolation=preset.interpolation), transforms.CenterCrop(preset.crop_size), transforms.ToTensor()])
@@ -129,7 +128,7 @@ def evaluate_sequence(model, domains, loader_factory, visits=1, device='cuda', p
 
 def eval(cfg, workers=4, print_every=100):
     if tuple(cfg.CORRUPTION.TYPE) != D109_DOMAINS:
-        raise ValueError('ASR IN-D109 order is clipart, infograph, painting, sketch')
+        raise ValueError('IN-D109 order is clipart, infograph, painting, sketch')
     if cfg.CORRUPTION.DATASET != 'imagenet_d109' or cfg.CORRUPTION.NUM_CLASS != 109:
         raise ValueError('IN-D109 requires the ImageNet model with a 109-class output mask')
     base_results = dict(method=cfg.ADAPTER.NAME, model=cfg.MODEL.ARCH, seed=cfg.SEED, batch_size=cfg.TEST.BATCH_SIZE, note=cfg.NOTE, echo=bool(cfg.ADAPTER.ECHO.ENABLED))
@@ -169,7 +168,7 @@ def main():
     log.info(f'Running file: {os.path.basename(__file__)}')
     parser = argparse.ArgumentParser(__doc__)
     parser.add_argument('-acfg', '--adapter-config-file', metavar='FILE', type=str, default=str(ROOT / 'configs/adapter/imagenet/Tent.yaml'), help='path to adapter config file')
-    parser.add_argument('-dcfg', '--dataset-config-file', metavar='FILE', type=str, default=str(ROOT / 'configs/dataset/imagenet_d109_asr.yaml'), help='path to dataset config file')
+    parser.add_argument('-dcfg', '--dataset-config-file', metavar='FILE', type=str, default=str(ROOT / 'configs/dataset/imagenet_d109.yaml'), help='path to dataset config file')
     parser.add_argument('-mcfg', '--model-config-file', metavar='FILE', type=str, default=str(ROOT / 'configs/models/vit_b_16.yaml'), help='path to model config file')
     parser.add_argument('-ecfg', '--echo-config-file', metavar='FILE', type=str, default='', help='ECHO defaults applied before command-line overrides')
     parser.add_argument('--workers', type=int, default=4)
@@ -196,7 +195,7 @@ def main():
         torch.use_deterministic_algorithms(True)
     log.remove()
     log.add(sys.stderr, level='DEBUG' if cfg.DEBUG else 'INFO')
-    set_logger(cfg.LOG_DIR, f'ASR_protocol_{cfg.ADAPTER.NAME}')
+    set_logger(cfg.LOG_DIR, f'D109_{cfg.ADAPTER.NAME}')
     current_file_name = os.path.basename(__file__)
     setproctitle(f'{current_file_name}:{cfg.CORRUPTION.DATASET}:{cfg.ADAPTER.NAME}')
     log.info(f'Run settings: method={cfg.ADAPTER.NAME}, model={cfg.MODEL.ARCH}, dataset={cfg.CORRUPTION.DATASET}, seed={cfg.SEED}, batch_size={cfg.TEST.BATCH_SIZE}, visits={cfg.TEST.ROUNDS}, ECHO={cfg.ADAPTER.ECHO.ENABLED}, NEO={False}\nNOTE: {cfg.NOTE}')

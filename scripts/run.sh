@@ -22,7 +22,7 @@ case "$scenario" in
     shuffle) runner=L-CS-Shuffle.py ;;
     imbalance) runner=L-CS-LS.py; extra+=(LOADER.SAMPLER.TYPE temporal LOADER.SAMPLER.GAMMA 0.1) ;;
     source-error) runner=L-CS_Blind-Spot.py; extra+=(INPUT.BLIND_SPOT_MODE SOURCE_ERROR) ;;
-    d109) runner=L-IN-D109.py; dataset=imagenet_d109_asr; adapter_dataset=imagenet_d109_asr; arch=vit_b_16; lr=0.001; extra+=(--workers 4) ;;
+    d109) runner=L-IN-D109.py; dataset=imagenet_d109; adapter_dataset=imagenet_d109; arch=vit_b_16; lr=0.001; extra+=(--workers 4) ;;
     *) echo 'Scenario: inc/3dcc/cbar/multi/shuffle/imbalance/d109/source-error' >&2; exit 2 ;;
 esac
 order=()
