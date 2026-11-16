@@ -14,13 +14,6 @@
 
 ---
 
-ECHO equips test-time adaptation with a **fixed-size associative memory**.
-RGB histogram keys describe each incoming batch; the memory recalls an adaptation
-state, the base method takes its usual step, and the update is written back under
-the same key. Recurring shifts can build on what the adapter learned before.
-
-**RGB histogram keys · Similarity-weighted recall · Fixed memory budget**
-
 <p align="center">
 <img src="assets/echo-plugin.png" alt="ECHO wraps Tent, EATA, or ROID in one line: read memory, take the base step, write the update." width="800">
 </p>
